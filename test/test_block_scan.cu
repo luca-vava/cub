@@ -63,9 +63,7 @@ CachingDeviceAllocator  g_allocator(true);
  */
 enum TestMode
 {
-    BASIC,
-    AGGREGATE,
-    PREFIX,
+   PREFIX
 };
 
 
@@ -131,42 +129,6 @@ struct BlockPrefixCallbackOp
 // Exclusive scan
 //---------------------------------------------------------------------
 
-/// Exclusive scan (BASIC, 1)
-template <typename BlockScanT, typename T, typename ScanOpT, typename PrefixCallbackOp, typename IsPrimitiveT>
-__device__ __forceinline__ void DeviceTest(
-    BlockScanT &block_scan, T (&data)[1], T &initial_value, ScanOpT &scan_op, T &block_aggregate, PrefixCallbackOp &prefix_op,
-    Int2Type<EXCLUSIVE> scan_mode, Int2Type<BASIC> test_mode, IsPrimitiveT is_primitive)
-{
-    block_scan.ExclusiveScan(data[0], data[0], initial_value, scan_op);
-}
-
-/// Exclusive scan (BASIC, ITEMS_PER_THREAD)
-template <typename BlockScanT, typename T, typename ScanOpT, typename PrefixCallbackOp, int ITEMS_PER_THREAD, typename IsPrimitiveT>
-__device__ __forceinline__ void DeviceTest(
-    BlockScanT &block_scan, T (&data)[ITEMS_PER_THREAD], T &initial_value, ScanOpT &scan_op, T &block_aggregate, PrefixCallbackOp &prefix_op,
-    Int2Type<EXCLUSIVE> scan_mode, Int2Type<BASIC> test_mode, IsPrimitiveT is_primitive)
-{
-    block_scan.ExclusiveScan(data, data, initial_value, scan_op);
-}
-
-/// Exclusive scan (AGGREGATE, 1)
-template <typename BlockScanT, typename T, typename ScanOpT, typename PrefixCallbackOp, typename IsPrimitiveT>
-__device__ __forceinline__ void DeviceTest(
-    BlockScanT &block_scan, T (&data)[1], T &initial_value, ScanOpT &scan_op, T &block_aggregate, PrefixCallbackOp &prefix_op,
-    Int2Type<EXCLUSIVE> scan_mode, Int2Type<AGGREGATE> test_mode, IsPrimitiveT is_primitive)
-{
-    block_scan.ExclusiveScan(data[0], data[0], initial_value, scan_op, block_aggregate);
-}
-
-/// Exclusive scan (AGGREGATE, ITEMS_PER_THREAD)
-template <typename BlockScanT, typename T, typename ScanOpT, typename PrefixCallbackOp, int ITEMS_PER_THREAD, typename IsPrimitiveT>
-__device__ __forceinline__ void DeviceTest(
-    BlockScanT &block_scan, T (&data)[ITEMS_PER_THREAD], T &initial_value, ScanOpT &scan_op, T &block_aggregate, PrefixCallbackOp &prefix_op,
-    Int2Type<EXCLUSIVE> scan_mode, Int2Type<AGGREGATE> test_mode, IsPrimitiveT is_primitive)
-{
-    block_scan.ExclusiveScan(data, data, initial_value, scan_op, block_aggregate);
-}
-
 /// Exclusive scan (PREFIX, 1)
 template <typename BlockScanT, typename T, typename ScanOpT, typename PrefixCallbackOp, typename IsPrimitiveT>
 __device__ __forceinline__ void DeviceTest(
@@ -176,55 +138,10 @@ __device__ __forceinline__ void DeviceTest(
     block_scan.ExclusiveScan(data[0], data[0], scan_op, prefix_op);
 }
 
-/// Exclusive scan (PREFIX, ITEMS_PER_THREAD)
-template <typename BlockScanT, typename T, typename ScanOpT, typename PrefixCallbackOp, int ITEMS_PER_THREAD, typename IsPrimitiveT>
-__device__ __forceinline__ void DeviceTest(
-    BlockScanT &block_scan, T (&data)[ITEMS_PER_THREAD], T &initial_value, ScanOpT &scan_op, T &block_aggregate, PrefixCallbackOp &prefix_op,
-    Int2Type<EXCLUSIVE> scan_mode, Int2Type<PREFIX> test_mode, IsPrimitiveT is_primitive)
-{
-    block_scan.ExclusiveScan(data, data, scan_op, prefix_op);
-}
-
 
 //---------------------------------------------------------------------
 // Exclusive sum
 //---------------------------------------------------------------------
-
-/// Exclusive sum (BASIC, 1)
-template <typename BlockScanT, typename T, typename PrefixCallbackOp>
-__device__ __forceinline__ void DeviceTest(
-    BlockScanT &block_scan, T (&data)[1], T &initial_value, Sum &scan_op, T &block_aggregate, PrefixCallbackOp &prefix_op,
-    Int2Type<EXCLUSIVE> scan_mode, Int2Type<BASIC> test_mode, Int2Type<true> is_primitive)
-{
-    block_scan.ExclusiveSum(data[0], data[0]);
-}
-
-/// Exclusive sum (BASIC, ITEMS_PER_THREAD)
-template <typename BlockScanT, typename T, typename PrefixCallbackOp, int ITEMS_PER_THREAD>
-__device__ __forceinline__ void DeviceTest(
-    BlockScanT &block_scan, T (&data)[ITEMS_PER_THREAD], T &initial_value, Sum &scan_op, T &block_aggregate, PrefixCallbackOp &prefix_op,
-    Int2Type<EXCLUSIVE> scan_mode, Int2Type<BASIC> test_mode, Int2Type<true> is_primitive)
-{
-    block_scan.ExclusiveSum(data, data);
-}
-
-/// Exclusive sum (AGGREGATE, 1)
-template <typename BlockScanT, typename T, typename PrefixCallbackOp>
-__device__ __forceinline__ void DeviceTest(
-    BlockScanT &block_scan, T (&data)[1], T &initial_value, Sum &scan_op, T &block_aggregate, PrefixCallbackOp &prefix_op,
-    Int2Type<EXCLUSIVE> scan_mode, Int2Type<AGGREGATE> test_mode, Int2Type<true> is_primitive)
-{
-    block_scan.ExclusiveSum(data[0], data[0], block_aggregate);
-}
-
-/// Exclusive sum (AGGREGATE, ITEMS_PER_THREAD)
-template <typename BlockScanT, typename T, typename PrefixCallbackOp, int ITEMS_PER_THREAD>
-__device__ __forceinline__ void DeviceTest(
-    BlockScanT &block_scan, T (&data)[ITEMS_PER_THREAD], T &initial_value, Sum &scan_op, T &block_aggregate, PrefixCallbackOp &prefix_op,
-    Int2Type<EXCLUSIVE> scan_mode, Int2Type<AGGREGATE> test_mode, Int2Type<true> is_primitive)
-{
-    block_scan.ExclusiveSum(data, data, block_aggregate);
-}
 
 /// Exclusive sum (PREFIX, 1)
 template <typename BlockScanT, typename T, typename PrefixCallbackOp>
@@ -235,55 +152,9 @@ __device__ __forceinline__ void DeviceTest(
     block_scan.ExclusiveSum(data[0], data[0], prefix_op);
 }
 
-/// Exclusive sum (PREFIX, ITEMS_PER_THREAD)
-template <typename BlockScanT, typename T, typename PrefixCallbackOp, int ITEMS_PER_THREAD>
-__device__ __forceinline__ void DeviceTest(
-    BlockScanT &block_scan, T (&data)[ITEMS_PER_THREAD], T &initial_value, Sum &scan_op, T &block_aggregate, PrefixCallbackOp &prefix_op,
-    Int2Type<EXCLUSIVE> scan_mode, Int2Type<PREFIX> test_mode, Int2Type<true> is_primitive)
-{
-    block_scan.ExclusiveSum(data, data, prefix_op);
-}
-
-
 //---------------------------------------------------------------------
 // Inclusive scan
 //---------------------------------------------------------------------
-
-/// Inclusive scan (BASIC, 1)
-template <typename BlockScanT, typename T, typename ScanOpT, typename PrefixCallbackOp, typename IsPrimitiveT>
-__device__ __forceinline__ void DeviceTest(
-    BlockScanT &block_scan, T (&data)[1], T &initial_value, ScanOpT &scan_op, T &block_aggregate, PrefixCallbackOp &prefix_op,
-    Int2Type<INCLUSIVE> scan_mode, Int2Type<BASIC> test_mode, IsPrimitiveT is_primitive)
-{
-    block_scan.InclusiveScan(data[0], data[0], scan_op);
-}
-
-/// Inclusive scan (BASIC, ITEMS_PER_THREAD)
-template <typename BlockScanT, typename T, typename ScanOpT, typename PrefixCallbackOp, int ITEMS_PER_THREAD, typename IsPrimitiveT>
-__device__ __forceinline__ void DeviceTest(
-    BlockScanT &block_scan, T (&data)[ITEMS_PER_THREAD], T &initial_value, ScanOpT &scan_op, T &block_aggregate, PrefixCallbackOp &prefix_op,
-    Int2Type<INCLUSIVE> scan_mode, Int2Type<BASIC> test_mode, IsPrimitiveT is_primitive)
-{
-    block_scan.InclusiveScan(data, data, scan_op);
-}
-
-/// Inclusive scan (AGGREGATE, 1)
-template <typename BlockScanT, typename T, typename ScanOpT, typename PrefixCallbackOp, typename IsPrimitiveT>
-__device__ __forceinline__ void DeviceTest(
-    BlockScanT &block_scan, T (&data)[1], T &initial_value, ScanOpT &scan_op, T &block_aggregate, PrefixCallbackOp &prefix_op,
-    Int2Type<INCLUSIVE> scan_mode, Int2Type<AGGREGATE> test_mode, IsPrimitiveT is_primitive)
-{
-    block_scan.InclusiveScan(data[0], data[0], scan_op, block_aggregate);
-}
-
-/// Inclusive scan (AGGREGATE, ITEMS_PER_THREAD)
-template <typename BlockScanT, typename T, typename ScanOpT, typename PrefixCallbackOp, int ITEMS_PER_THREAD, typename IsPrimitiveT>
-__device__ __forceinline__ void DeviceTest(
-    BlockScanT &block_scan, T (&data)[ITEMS_PER_THREAD], T &initial_value, ScanOpT &scan_op, T &block_aggregate, PrefixCallbackOp &prefix_op,
-    Int2Type<INCLUSIVE> scan_mode, Int2Type<AGGREGATE> test_mode, IsPrimitiveT is_primitive)
-{
-    block_scan.InclusiveScan(data, data, scan_op, block_aggregate);
-}
 
 /// Inclusive scan (PREFIX, 1)
 template <typename BlockScanT, typename T, typename ScanOpT, typename PrefixCallbackOp, typename IsPrimitiveT>
@@ -294,55 +165,9 @@ __device__ __forceinline__ void DeviceTest(
     block_scan.InclusiveScan(data[0], data[0], scan_op, prefix_op);
 }
 
-/// Inclusive scan (PREFIX, ITEMS_PER_THREAD)
-template <typename BlockScanT, typename T, typename ScanOpT, typename PrefixCallbackOp, int ITEMS_PER_THREAD, typename IsPrimitiveT>
-__device__ __forceinline__ void DeviceTest(
-    BlockScanT &block_scan, T (&data)[ITEMS_PER_THREAD], T &initial_value, ScanOpT &scan_op, T &block_aggregate, PrefixCallbackOp &prefix_op,
-    Int2Type<INCLUSIVE> scan_mode, Int2Type<PREFIX> test_mode, IsPrimitiveT is_primitive)
-{
-    block_scan.InclusiveScan(data, data, scan_op, prefix_op);
-}
-
-
 //---------------------------------------------------------------------
 // Inclusive sum
 //---------------------------------------------------------------------
-
-/// Inclusive sum (BASIC, 1)
-template <typename BlockScanT, typename T, typename PrefixCallbackOp>
-__device__ __forceinline__ void DeviceTest(
-    BlockScanT &block_scan, T (&data)[1], T &initial_value, Sum &scan_op, T &block_aggregate, PrefixCallbackOp &prefix_op,
-    Int2Type<INCLUSIVE> scan_mode, Int2Type<BASIC> test_mode, Int2Type<true> is_primitive)
-{
-    block_scan.InclusiveSum(data[0], data[0]);
-}
-
-/// Inclusive sum (BASIC, ITEMS_PER_THREAD)
-template <typename BlockScanT, typename T, typename PrefixCallbackOp, int ITEMS_PER_THREAD>
-__device__ __forceinline__ void DeviceTest(
-    BlockScanT &block_scan, T (&data)[ITEMS_PER_THREAD], T &initial_value, Sum &scan_op, T &block_aggregate, PrefixCallbackOp &prefix_op,
-    Int2Type<INCLUSIVE> scan_mode, Int2Type<BASIC> test_mode, Int2Type<true> is_primitive)
-{
-    block_scan.InclusiveSum(data, data);
-}
-
-/// Inclusive sum (AGGREGATE, 1)
-template <typename BlockScanT, typename T, typename PrefixCallbackOp>
-__device__ __forceinline__ void DeviceTest(
-    BlockScanT &block_scan, T (&data)[1], T &initial_value, Sum &scan_op, T &block_aggregate, PrefixCallbackOp &prefix_op,
-    Int2Type<INCLUSIVE> scan_mode, Int2Type<AGGREGATE> test_mode, Int2Type<true> is_primitive)
-{
-    block_scan.InclusiveSum(data[0], data[0], block_aggregate);
-}
-
-/// Inclusive sum (AGGREGATE, ITEMS_PER_THREAD)
-template <typename BlockScanT, typename T, typename PrefixCallbackOp, int ITEMS_PER_THREAD>
-__device__ __forceinline__ void DeviceTest(
-    BlockScanT &block_scan, T (&data)[ITEMS_PER_THREAD], T &initial_value, Sum &scan_op, T &block_aggregate, PrefixCallbackOp &prefix_op,
-    Int2Type<INCLUSIVE> scan_mode, Int2Type<AGGREGATE> test_mode, Int2Type<true> is_primitive)
-{
-    block_scan.InclusiveSum(data, data, block_aggregate);
-}
 
 /// Inclusive sum (PREFIX, 1)
 template <typename BlockScanT, typename T, typename PrefixCallbackOp>
@@ -352,16 +177,6 @@ __device__ __forceinline__ void DeviceTest(
 {
     block_scan.InclusiveSum(data[0], data[0], prefix_op);
 }
-
-/// Inclusive sum (PREFIX, ITEMS_PER_THREAD)
-template <typename BlockScanT, typename T, typename PrefixCallbackOp, int ITEMS_PER_THREAD>
-__device__ __forceinline__ void DeviceTest(
-    BlockScanT &block_scan, T (&data)[ITEMS_PER_THREAD], T &initial_value, Sum &scan_op, T &block_aggregate, PrefixCallbackOp &prefix_op,
-    Int2Type<INCLUSIVE> scan_mode, Int2Type<PREFIX> test_mode, Int2Type<true> is_primitive)
-{
-    block_scan.InclusiveSum(data, data, prefix_op);
-}
-
 
 
 //---------------------------------------------------------------------
